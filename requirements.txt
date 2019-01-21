@@ -1,0 +1,2 @@
+hermes_python==0.1.27
+requests
