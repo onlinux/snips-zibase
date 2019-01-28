@@ -5,18 +5,17 @@
 # http://blog.onlinux.fr
 #
 # Import required Python libraries
+import os
+import requests
 import settings
 from Zapi import ZiBase
+import logging
+import logging.config
 import paho.mqtt.publish as publish
-
 from hermes_python.hermes import Hermes
-import requests
 from snipshelpers.config_parser import SnipsConfigParser
 
 # Fixing utf-8 issues when sending Snips intents in French with accents
-import os
-import logging
-import logging.config
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
