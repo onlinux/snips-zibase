@@ -10,6 +10,7 @@ ROLLERSHUTTERID = {
     'rez-de-chaussée':      ['C3','C2', 'C1'],
     'du bas':               ['C3','C2', 'C1'],
     'salon':                ['C3','C2'],
+    'salle à manger':       ['C3','C2'],
     'premier étage':        ['C6', 'C4', 'C5', 'C7'],
     'du haut':              ['C6', 'C4', 'C5', 'C7'],
     'chambre':              ['C7'],

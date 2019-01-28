@@ -29,6 +29,7 @@ GESTION_VOLETS = 'ericvde31830:gestionVolets'
 LIGHTSOFF = 'ericvde31830:lightsTurnOff'
 LIGHTSSET = 'ericvde31830:lightsSet'
 ASKTEMP = 'ericvde31830:ask4TempHum'
+ALL_INTENTS = [GESTION_VOLETS, LIGHTSOFF, LIGHTSSET]
 
 # os.path.realpath returns the canonical path of the specified filename,
 # eliminating any symbolic links encountered in the path.
@@ -42,7 +43,10 @@ logger = logging.getLogger(__name__)
 def intent_received(hermes, intent_message):
     intentName = intent_message.intent.intent_name
     sentence = 'Voilà c\'est fait.'
-    logger.debug("intentName = {}".format(intentName))
+    logger.debug(" Session started, intentName = {}".format(intentName))
+    logger.debug(" sessionID: {}".format(intent_message.session_id))
+    logger.debug(" session site ID: {}".format(intent_message.site_id))
+    logger.debug(" custumData: {}".format(intent_message.custom_data))
 
     for (slot_value, slot) in intent_message.slots.items():
         print('Slot {} -> \n\tRaw: {} \tValue: {}'
@@ -111,10 +115,16 @@ def intent_received(hermes, intent_message):
             room_slot = intent_message.slots.house_room.first()
             room = room_slot.value.encode('utf-8')
             logger.debug(room)
+            if room not in settings.LIGHTID and room not in settings.SONOFFID:
+                sentence = 'Désolée, mais je ne peux pas agir dans la pièce nommée {}'.format(room)
+                hermes.publish_end_session(intent_message.session_id, sentence)
+                logger.debug(" " + sentence)
+                logger.debug(" Session started, intentName = {}".format(intentName))
+                return
         else:
             room = None
-            sentence = 'Je n\'ai pas compris. S\'il vous plaît, indiquez la pièce plus clairement.'
-            hermes.publish_end_session(intent_message.session_id, sentence)
+            sentence = 'Je n\'ai pas saisi la pièce . Répétez s\'il vous plaît.'
+            hermes.publish_continue_session(intent_message.session_id, sentence, ALL_INTENTS)
             return
 
         if room is not None and room in settings.LIGHTID:
@@ -136,7 +146,12 @@ def intent_received(hermes, intent_message):
                         if 'OK' not in str(e):
                             sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion à la zibase.'
                             logger.warning(e)
-                        pass
+                            hermes.publish_end_session(intent_message.session_id, sentence)
+                        else:
+                            sentence = "Ok, c'est fait"
+                            hermes.publish_end_session(intent_message.session_id, sentence)
+                            logger.debug(sentence)
+                            return
 
         elif room is not None and room in settings.SONOFFID:
             arg = settings.SONOFFID.get(room)
@@ -153,16 +168,20 @@ def intent_received(hermes, intent_message):
                     try:
                         resp = requests.get(url)
                         logger.debug(resp.text)
+
                     except requests.ConnectionError, e:
-                        sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion à la zibase.'
+                        sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème avec le sonoff.'
                         logger.warning(e)
-                        pass
+
+                logger.debug(sentence)
+                hermes.publish_end_session(intent_message.session_id, sentence)
+
 
         else:
             sentence = 'Désolé mais je ne connais pas cette pièce. S\'il vout plaît, indiquez la pièce plus clairement.'
+            logger.debug(sentence)
+            hermes.publish_end_session(intent_message.session_id, sentence)
 
-        hermes.publish_end_session(intent_message.session_id, sentence)
-        return
 
     if intentName == LIGHTSSET:
         arg = None
@@ -172,11 +191,17 @@ def intent_received(hermes, intent_message):
             room_slot = intent_message.slots.house_room.first()
             room = room_slot.value.encode('utf-8')
             logger.debug("Room: {}".format(room))
+            if room not in settings.LIGHTID and room not in settings.SONOFFID:
+                sentence = 'Désolée, mais je ne peux pas agir dans la pièce nommée {}'.format(room)
+                hermes.publish_end_session(intent_message.session_id, sentence)
+                logger.debug(" " + sentence)
+                logger.debug(" Session started, intentName = {}".format(intentName))
+                return
 
         else:
             room = None
-            sentence = 'Je n\'ai pas compris. Indiquez la pièce plus clairement, s\'il vout plaît'
-            hermes.publish_end_session(intent_message.session_id, sentence)
+            sentence = 'Désolée mais je n\'ai pas bien saisi la pièce . Répétez s\'il vous plaît.'
+            hermes.publish_continue_session(intent_message.session_id, sentence, ALL_INTENTS)
             return
 
         if room is not None and room in settings.LIGHTID:
@@ -210,7 +235,9 @@ def intent_received(hermes, intent_message):
                         if 'OK' not in str(e):
                             logger.warning(e)
                             sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion à la zibase.'
-                        pass
+
+                    hermes.publish_end_session(intent_message.session_id, sentence)
+                    return
 
         elif room is not None and room in settings.SONOFFID:
             # Devices driven by sonoff
@@ -229,65 +256,88 @@ def intent_received(hermes, intent_message):
                     except requests.ConnectionError, e:
                         sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion au sonoff.'
                         logger.warning(e)
-                        pass
+
+                logger.debug(sentence)
+                hermes.publish_end_session(intent_message.session_id, sentence)
 
         else:
             sentence = 'Désolé mais je ne reconnais pas cette pièce. Indiquez l\'endroit plus clairement, merci!'
+            logger.debug(sentence)
+            hermes.publish_end_session(intent_message.session_id, sentence)
 
-        hermes.publish_end_session(intent_message.session_id, sentence)
-        return
 
     if intentName == GESTION_VOLETS:
         arg = None
         action = None
         url = None
+        sentence = "Ok, j'ai bien envoyé l'ordre aux volets"
 
         if intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
             room = room_slot.value.encode('utf-8')
             logger.debug(room)
-            #print ROLLERSHUTTERID.keys()
-            if room is not None and room in settings.ROLLERSHUTTERID:
-                arg = settings.ROLLERSHUTTERID[room]
-                logger.debug(arg)
 
-        if intent_message.slots.action:
-            action_slot = intent_message.slots.action.first()
-            action = action_slot.value
+            if room not in settings.ROLLERSHUTTERID:
+                sentence = 'Désolée, mais je ne peux pas agir sur les volets de la pièce nommée {}'.format(room)
+                hermes.publish_end_session(intent_message.session_id, sentence)
+                logger.debug(" " + sentence)
+                logger.debug(" Session started, intentName = {}".format(intentName))
+                return
 
-            if action is not None and arg is not None:
-                for i, item in enumerate(arg):
-                    logger.debug(item)
-                    if action == 'lever':
-                        url = "http://{}/cgi-bin/domo.cgi?cmd=ON {} P10".format(
-                            ip, item)
-                    elif action == 'entre-ouvrir':
-                        url = "http://{}/cgi-bin/domo.cgi?cmd=DIM {} P10 100".format(
-                            ip, item)
-                    elif action == 'baisser':
-                        url = "http://{}/cgi-bin/domo.cgi?cmd=off {} P10".format(
-                            ip, item)
-                    else:
-                        sentence = 'Désolé mais je n\'ai pas compris.'
-                        url = None
+        else:
+            # Slot room not present
+            room = None
+            sentence = 'Je n\'ai pas saisi la pièce . Répétez s\'il vous plaît.'
+            hermes.publish_continue_session(intent_message.session_id, sentence, GESTION_VOLETS)
+            return
 
-                    if url is not None:
-                        logger.debug(url)
-                        try:
-                            resp = requests.get(url)
-                            logger.debug(resp.text)
-                        except requests.ConnectionError, e:
-                            # Trick to bypass the wrong return status of zibase
-                            # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
-                            if 'OK' not in str(e):
-                                logger.warning(e)
-                                sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion à la zibase.'
-                            pass
-            else:
-                sentence = 'Désolé mais je ne connais pas cette pièce '
+        if room is not None and room in settings.ROLLERSHUTTERID:
+            arg = settings.ROLLERSHUTTERID[room]
+            logger.debug(arg)
+
+            if intent_message.slots.action:
+                action_slot = intent_message.slots.action.first()
+                action = action_slot.value
+
+                if action is not None and arg is not None:
+                    for i, item in enumerate(arg):
+                        logger.debug(item)
+                        if action == 'lever':
+                            url = "http://{}/cgi-bin/domo.cgi?cmd=ON {} P10".format(
+                                ip, item)
+                        elif action == 'entre-ouvrir':
+                            url = "http://{}/cgi-bin/domo.cgi?cmd=DIM {} P10 100".format(
+                                ip, item)
+                        elif action == 'baisser':
+                            url = "http://{}/cgi-bin/domo.cgi?cmd=off {} P10".format(
+                                ip, item)
+                        else:
+                            sentence = 'Désolé mais je n\'ai pas compris.'
+                            url = None
+
+                        if url is not None:
+                            logger.debug(url)
+                            try:
+                                resp = requests.get(url)
+                                logger.debug(resp.text)
+                            except requests.ConnectionError, e:
+                                # Trick to bypass the wrong return status of zibase
+                                # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
+                                if 'OK' not in str(e):
+                                    sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion à la zibase.'
+                                    logger.warning(e)
+
+                                else:
+                                    sentence = "Ok, c'est fait"
+                                    logger.debug(sentence)
+
+
+                logger.debug(sentence)
+                hermes.publish_end_session(intent_message.session_id, sentence)
+        else:
+            sentence = 'Désolé mais je ne connais pas cette pièce '
             logger.debug(sentence)
             hermes.publish_end_session(intent_message.session_id, sentence)
-
 
 with Hermes(MQTT_ADDR) as h:
 
@@ -329,4 +379,7 @@ with Hermes(MQTT_ADDR) as h:
             zibase = None
             logger.error('Error Zapi {}'.format(e))
 
-    h.subscribe_intents(intent_received).start()
+    h.subscribe_intent(LIGHTSOFF, intent_received) \
+        .subscribe_intent(LIGHTSSET, intent_received) \
+        .subscribe_intent(GESTION_VOLETS, intent_received) \
+        .start()

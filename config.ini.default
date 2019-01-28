@@ -3,7 +3,7 @@
 [secret]
 ip_zibase=192.168.0.100
 sonoffuser =
-sonoffpassword=
+sonoffpassword =
 
 [feedback]
 enable=false
