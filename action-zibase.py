@@ -382,4 +382,5 @@ with Hermes(MQTT_ADDR) as h:
     h.subscribe_intent(LIGHTSOFF, intent_received) \
         .subscribe_intent(LIGHTSSET, intent_received) \
         .subscribe_intent(GESTION_VOLETS, intent_received) \
+        .subscribe_intent(ASKTEMP, intent_received) \
         .start()
