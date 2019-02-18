@@ -103,7 +103,7 @@ class ZbRequest(object):
 
 
     def toBinaryArray(self):
-        """ Serialize la requ�te en chaine binaire """
+        """ Serialize la requête en chaine binaire """
         buffer = array('B')
         buffer = self.header
         buffer.extend(struct.pack('!H', self.command))
@@ -122,7 +122,7 @@ class ZbRequest(object):
 
 
 class ZbResponse(object):
-    """ Repr�sente une r�ponse de la zibase """
+    """ Représente une réponse de la zibase """
 
     def __init__(self, buffer):
         """ Construction de la r�ponse � partir de la chaine binaire re�ue """
@@ -150,7 +150,7 @@ class ZiBase(object):
 
 
     def sendRequest(self, request):
-        """ Envoi la requete � la zibase � travers le r�seau """
+        """ Envoi la requete à la zibase à travers le réseau """
         buffer = request.toBinaryArray()
         response = None
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -165,7 +165,7 @@ class ZiBase(object):
 
 
     def sendCommand(self, address, action, protocol = ZbProtocol.PRESET, dimLevel = 0, nbBurst = 1):
-        """ Envoi d'une commande � la zibase """
+        """ Envoi d'une commande à la zibase """
         if len(address) >= 2:
             address = address.upper()
             req = ZbRequest()

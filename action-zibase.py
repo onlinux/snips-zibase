@@ -219,9 +219,9 @@ def intent_received(hermes, intent_message):
                     if percentage is not None:
                         url = "http://{}/cgi-bin/domo.cgi?cmd=DIM {} P3 {}".format(
                             ip, item, percentage)
-                    # Start scenario 49. Turns on light for 5 minutes.
+                    # Start scenario 28. Turns on light for 5 minutes.
                     elif item == 'G6':
-                        url = "http://{}/cgi-bin/domo.cgi?cmd=LM49".format(ip)
+                        url = "http://{}/cgi-bin/domo.cgi?cmd=LM28".format(ip)
                     else:
                         url = "http://{}/cgi-bin/domo.cgi?cmd=ON {}".format(
                             ip, item)
