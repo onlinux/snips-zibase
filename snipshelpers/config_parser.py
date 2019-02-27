@@ -1,9 +1,9 @@
-import ConfigParser
+import configparser
 import io
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 
-class SnipsConfigParser(ConfigParser.SafeConfigParser):
+class SnipsConfigParser(configparser.SafeConfigParser):
     def to_dict(self):
         return {section: {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
 

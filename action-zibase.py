@@ -1,10 +1,10 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 #
 # Author: Eric Vandecasteele 2018
 # http://blog.onlinux.fr
 #
 # Import required Python libraries
+import importlib
 import settings
 from Zapi import ZiBase
 
@@ -17,8 +17,8 @@ import os
 import logging
 import logging.config
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+importlib.reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 CONFIG_INI = "config.ini"
 MQTT_IP_ADDR = "localhost"
@@ -56,10 +56,10 @@ def intent_received(hermes, intent_message):
         arg = None
         if intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
-            room = room_slot.value.encode('utf-8')
+            room = room_slot.value
         elif intent_message.slots.device:
             room_slot = intent_message.slots.device.first()
-            room = room_slot.value.encode('utf-8')
+            room = room_slot.value
         else:
             room = 'salon'
 
@@ -113,7 +113,7 @@ def intent_received(hermes, intent_message):
 
         if intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
-            room = room_slot.value.encode('utf-8')
+            room = room_slot.value
             logger.debug(room)
             if room not in settings.LIGHTID and room not in settings.SONOFFID:
                 sentence = 'Désolée, mais je ne peux pas agir dans la pièce nommée {}'.format(room)
@@ -140,7 +140,7 @@ def intent_received(hermes, intent_message):
                     try:
                         resp = requests.get(url)
                         logger.debug(resp.text)
-                    except requests.ConnectionError, e:
+                    except requests.ConnectionError( e):
                         # Trick to bypass the wrong return status of zibase
                         # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
                         if 'OK' not in str(e):
@@ -169,7 +169,7 @@ def intent_received(hermes, intent_message):
                         resp = requests.get(url)
                         logger.debug(resp.text)
 
-                    except requests.ConnectionError, e:
+                    except requests.ConnectionError(e):
                         sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème avec le sonoff.'
                         logger.warning(e)
 
@@ -189,7 +189,7 @@ def intent_received(hermes, intent_message):
 
         if intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
-            room = room_slot.value.encode('utf-8')
+            room = room_slot.value
             logger.debug("Room: {}".format(room))
             if room not in settings.LIGHTID and room not in settings.SONOFFID:
                 sentence = 'Désolée, mais je ne peux pas agir dans la pièce nommée {}'.format(room)
@@ -219,9 +219,9 @@ def intent_received(hermes, intent_message):
                     if percentage is not None:
                         url = "http://{}/cgi-bin/domo.cgi?cmd=DIM {} P3 {}".format(
                             ip, item, percentage)
-                    # Start scenario 28. Turns on light for 5 minutes.
+                    # Start G6. Turns on light for 5 minutes.
                     elif item == 'G6':
-                        url = "http://{}/cgi-bin/domo.cgi?cmd=LM28".format(ip)
+                        url = "http://{}/cgi-bin/domo.cgi?cmd=ON G6 during 300".format(ip)
                     else:
                         url = "http://{}/cgi-bin/domo.cgi?cmd=ON {}".format(
                             ip, item)
@@ -229,7 +229,7 @@ def intent_received(hermes, intent_message):
                         logger.debug(url)
                         resp = requests.get(url)
                         logger.debug(resp.text)
-                    except requests.ConnectionError, e:
+                    except requests.ConnectionError( e ):
                         # Trick to bypass the wrong return status of zibase
                         # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
                         if 'OK' not in str(e):
@@ -253,7 +253,7 @@ def intent_received(hermes, intent_message):
                     try:
                         resp = requests.get(url)
                         logger.debug(resp.text)
-                    except requests.ConnectionError, e:
+                    except requests.ConnectionError(e):
                         sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion au sonoff.'
                         logger.warning(e)
 
@@ -274,7 +274,7 @@ def intent_received(hermes, intent_message):
 
         if intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
-            room = room_slot.value.encode('utf-8')
+            room = room_slot.value
             logger.debug(room)
 
             if room not in settings.ROLLERSHUTTERID:
@@ -320,7 +320,7 @@ def intent_received(hermes, intent_message):
                             try:
                                 resp = requests.get(url)
                                 logger.debug(resp.text)
-                            except requests.ConnectionError, e:
+                            except requests.ConnectionError(e):
                                 # Trick to bypass the wrong return status of zibase
                                 # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
                                 if 'OK' not in str(e):

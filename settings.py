@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Author: Eric Vandecasteele 2018
@@ -45,9 +45,9 @@ PROBEID = {
     'salle à manger':       'OS439158532',
     'congélateur':          'OS439204611',
     'patio':                'OS3391881217',
-    'auriol':               'OS3930897409',
-    'chambre de Caroline':  'OS439175681',
-    'chambre de Gaby':      'OS439219713',
-    'chambre parentale':    'OS439195905',
+    'auriol':               'OS439204622',
+    'chambre de Caroline':  'OS439183105',
+    'salle de bain':      'OS439219713',
+    'chambre parentale':    'OS439195137',
     'chambre':              'OS439195905',
 }

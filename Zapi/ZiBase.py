@@ -12,7 +12,15 @@ import urllib
 import struct
 import xml.dom.minidom
 from datetime import datetime
+import sys
 
+if sys.version_info[0] == 3:
+    from urllib.request import urlopen
+else:
+    # Not Python 3 - today, it is most likely to be Python 2
+    # But note that this might need an update when Python 4
+    # might be around one day
+    from urllib import urlopen
 
 def dec2bin(n):
     if n==0: return ''
@@ -319,7 +327,7 @@ class ZiBase(object):
         """
         if len(idSensor) > 0:
             url = "http://" + self.ip + "/sensors.xml"
-            handle = urllib.urlopen(url)
+            handle = urlopen(url)
             xmlContent = handle.read()
             handle.close()
             type = idSensor[0:2]

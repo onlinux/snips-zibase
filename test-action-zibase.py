@@ -25,7 +25,7 @@ MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 SITE = "default"
-SOUNDFILE = "./test//ia_ora-notification.wav"
+SOUNDFILE = "./test/ia_ora-notification.wav"
 binaryFile = open(SOUNDFILE, mode='rb')
 wav = bytearray(binaryFile.read())
 
