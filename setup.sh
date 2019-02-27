@@ -8,7 +8,7 @@ then
     if [ ! -d $VENV ]
     then
         # Create a virtual environment if it doesn't exist.
-        $PYTHON -m venv $VENV
+        $PYTHON -m venv $VENV --without-pip
     else
         if [ -e $VENV/bin/python2 ]
         then
@@ -21,7 +21,7 @@ then
 
     # Activate the virtual environment and install requirements.
     . $VENV/bin/activate
-    $PYTHON  -m pip install -r requirements.txt
+    $PYTHON  -m pip install  requirements.txt
 else
     >&2 echo "Cannot find Python 3. Please install it."
 fi
