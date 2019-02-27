@@ -21,7 +21,7 @@ then
 
     # Activate the virtual environment and install requirements.
     . $VENV/bin/activate
-    $PYTHON  -m pip install  requirements.txt
+    $PYTHON  -m pip install -r requirements.txt
 else
     >&2 echo "Cannot find Python 3. Please install it."
 fi
