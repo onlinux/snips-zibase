@@ -20,7 +20,7 @@ then
             # If a Python2 environment exists, delete it first
             # before creating a new Python 3 virtual environment.
             rm -r $VENV
-            $PYTHON -m venv $VENV
+            virtualenv $VENV -p python3
         fi
     fi
 
