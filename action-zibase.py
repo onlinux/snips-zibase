@@ -140,7 +140,7 @@ def intent_received(hermes, intent_message):
                     try:
                         resp = requests.get(url)
                         logger.debug(resp.text)
-                    except requests.ConnectionError( e):
+                    except requests.ConnectionError as e:
                         # Trick to bypass the wrong return status of zibase
                         # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
                         if 'OK' not in str(e):
@@ -229,7 +229,7 @@ def intent_received(hermes, intent_message):
                         logger.debug(url)
                         resp = requests.get(url)
                         logger.debug(resp.text)
-                    except requests.ConnectionError( e ):
+                    except requests.ConnectionError as e:
                         # Trick to bypass the wrong return status of zibase
                         # Even if request is ok, zibase returns ('Connection aborted.', BadStatusLine('OK\r\n',))
                         if 'OK' not in str(e):
@@ -253,7 +253,7 @@ def intent_received(hermes, intent_message):
                     try:
                         resp = requests.get(url)
                         logger.debug(resp.text)
-                    except requests.ConnectionError(e):
+                    except requests.ConnectionError as e:
                         sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion au sonoff.'
                         logger.warning(e)
 
