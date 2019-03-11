@@ -25,7 +25,9 @@ ROLLERSHUTTERID = {
 SONOFFID = {
     'tableau':          ['sonoff1-3395'],
     'salon' :           ['sonoff2-6546','sonoff1-3395'],
-    'lampe' :           ['sonoff2-6546']
+    'lampe' :           ['sonoff2-6546'],
+    'vmc'   :           ['sonoff4-powr2-2395'],
+    'lampe led'   :     ['sonoff3-rf-6401']
 }
 
 LIGHTID = {

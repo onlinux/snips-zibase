@@ -223,7 +223,7 @@ def intent_received(hermes, intent_message):
                     elif item == 'G6':
                         url = "http://{}/cgi-bin/domo.cgi?cmd=ON G6 during 300".format(ip)
                     else:
-                        url = "http://{}/cgi-bin/domo.cgi?cmd=ON {}".format(
+                        url = "http://{}/cgi-bin/domo.cgi?cmd=ON%20{}".format(
                             ip, item)
                     try:
                         logger.debug(url)
