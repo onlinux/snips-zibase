@@ -48,9 +48,10 @@ def intent_received(hermes, intent_message):
     logger.debug(" session site ID: {}".format(intent_message.site_id))
     logger.debug(" custumData: {}".format(intent_message.custom_data))
 
-    for (slot_value, slot) in intent_message.slots.items():
-        print('Slot {} -> \n\tRaw: {} \tValue: {}'
-              .format(slot_value, slot[0].raw_value, slot[0].slot_value.value.value))
+    if hasattr(intent_message.slots, 'items'):
+        for (slot_value, slot) in intent_message.slots.items():
+            print('Slot {} -> \n\tRaw: {} \tValue: {}'
+                  .format(slot_value, slot[0].raw_value, slot[0].slot_value.value.value))
 
     if intentName == ASKTEMP:
         arg = None
@@ -169,7 +170,7 @@ def intent_received(hermes, intent_message):
                         resp = requests.get(url)
                         logger.debug(resp.text)
 
-                    except requests.ConnectionError(e):
+                    except requests.ConnectionError as e:
                         sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème avec le sonoff.'
                         logger.warning(e)
 
