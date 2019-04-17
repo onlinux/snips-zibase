@@ -8,7 +8,6 @@
 
 from array import array
 import socket
-import urllib
 import struct
 import xml.dom.minidom
 from datetime import datetime
