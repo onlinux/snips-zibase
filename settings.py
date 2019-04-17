@@ -52,4 +52,5 @@ PROBEID = {
     'salle de bain':      'OS439219713',
     'chambre parentale':    'OS439195137',
     'chambre':              'OS439195905',
+    'chambre de Gaby':      'OS439219713'
 }
