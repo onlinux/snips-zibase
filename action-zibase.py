@@ -46,7 +46,7 @@ def intent_received(hermes, intent_message):
     logger.debug(" Session started, intentName = {}".format(intentName))
     logger.debug(" sessionID: {}".format(intent_message.session_id))
     logger.debug(" session site ID: {}".format(intent_message.site_id))
-    logger.debug(" custumData: {}".format(intent_message.custom_data))
+    logger.debug(" customData: {}".format(intent_message.custom_data))
 
     if hasattr(intent_message.slots, 'items'):
         for (slot_value, slot) in intent_message.slots.items():
@@ -133,6 +133,7 @@ def intent_received(hermes, intent_message):
             logger.debug(arg)
 
             if arg is not None:
+                sentence='Voilà'
                 for i, item in enumerate(arg):
                     logger.debug(item)
                     url = "http://{}/cgi-bin/domo.cgi?cmd=OFF {}".format(
@@ -147,12 +148,10 @@ def intent_received(hermes, intent_message):
                         if 'OK' not in str(e):
                             sentence = 'Désolé mais çà n\'a pas marché. Peut être un problème de connexion à la zibase.'
                             logger.warning(e)
-                            hermes.publish_end_session(intent_message.session_id, sentence)
-                        else:
-                            sentence = "Ok, c'est fait"
-                            hermes.publish_end_session(intent_message.session_id, sentence)
-                            logger.debug(sentence)
-                            return
+
+                    hermes.publish_end_session(intent_message.session_id, sentence)
+                    logger.debug(sentence)
+                    return
 
         elif room is not None and room in settings.SONOFFID:
             arg = settings.SONOFFID.get(room)
