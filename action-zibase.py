@@ -112,7 +112,7 @@ def intent_received(hermes, intent_message):
     if intentName == LIGHTSOFF:
         arg = None
 
-        if intent_message.slots.house_room:
+        if intent_message.slots and intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
             room = room_slot.value
             logger.debug(room)
@@ -187,7 +187,7 @@ def intent_received(hermes, intent_message):
         arg = None
         percentage = None
 
-        if intent_message.slots.house_room:
+        if intent_message.slots and intent_message.slots.house_room:
             room_slot = intent_message.slots.house_room.first()
             room = room_slot.value
             logger.debug("Room: {}".format(room))

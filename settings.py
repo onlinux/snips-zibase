@@ -43,13 +43,13 @@ LIGHTID = {
 }
 
 PROBEID = {
-    'salon':                'OS439158532',
+    'salon':                'OS439165444',
     'salle à manger':       'OS439158532',
     'congélateur':          'OS439204611',
     'patio':                'OS3391881217',
     'auriol':               'OS439204622',
     'chambre de Caroline':  'OS439183105',
-    'salle de bain':      'OS439219713',
+    'salle de bain':        'OS439219713',
     'chambre parentale':    'OS439195137',
     'chambre':              'OS439195905',
     'chambre de Gaby':      'OS439219713'
